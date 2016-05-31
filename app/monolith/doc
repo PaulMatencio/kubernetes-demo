@@ -1,0 +1,168 @@
+Welcome to Cloud Shell! For help, visit https://cloud.google.com/cloud-shell/help.
+
+paulo_matencio@seismic-catbird-123721:~$ curl http://127.0.0.1:10081
+{"message":"Hello"}
+
+paulo_matencio@seismic-catbird-123721:~$ curl http://127.0.0.1:10081/secure
+authorization failed
+
+paulo_matencio@seismic-catbird-123721:~$ curl http://127.0.0.1:10081/secure -u user 
+Enter host password for user 'user':
+authorization failed
+
+
+
+paulo_matencio@seismic-catbird-123721:~$ TOKEN=$(curl http://127.0.0.1:10080/login -u user | jq -r '.token')
+Enter host password for user 'user':
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (7) Failed to connect to 127.0.0.1 port 10080: Connection refused
+paulo_matencio@seismic-catbird-123721:~$ TOKEN=$(curl http://127.0.0.1:10080/login -u user | jq -r '.token')                                                                         
+Enter host password for user 'user':
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   222  100   222    0     0   1768      0 --:--:-- --:--:-- --:--:--  1790
+
+paulo_matencio@seismic-catbird-123721:~$ echo $TOKEN
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE0NjQ1MTIzMzMsImlhdCI6MTQ2NDI1MzEzMywiaXNzIjoiYXV0aC5zZXJ2aWNlIiwic3ViIjoidXNlciJ9.y2eocgOOyGJF-jVfx7
+Rgp3odBLtD0S-ZmF6s_RQI1TA
+
+
+paulo_matencio@seismic-catbird-123721:~$ curl -H "Authorization: Bearer $TOKEN" http://127.0.0.1:10080/secure
+{"message":"Hello"}
+
+paulo_matencio@seismic-catbird-123721:~$ 
+
+
+
+Twelve Factor Apps
+
+	Portable
+	Continually deployable
+	Scalable
+	
+Our microservices adddress most of the factors - We will use Docker and Kubernetes for the rest
+
+
+
+Create a server 
+
+
+paulo_matencio@seismic-catbird-123721:~$ 
+
+gcloud compute zones list 
+
+
+NAME            REGION        STATUS  NEXT_MAINTENANCE  TURNDOWN_DATE
+asia-east1-b    asia-east1    UP
+asia-east1-a    asia-east1    UP
+asia-east1-c    asia-east1    UP
+europe-west1-b  europe-west1  UP
+europe-west1-d  europe-west1  UP
+europe-west1-c  europe-west1  UP
+us-central1-b   us-central1   UP
+us-central1-a   us-central1   UP
+us-central1-f   us-central1   UP
+us-central1-c   us-central1   UP
+us-east1-c      us-east1      UP
+us-east1-d      us-east1      UP
+us-east1-b      us-east1      UP
+paulo_matencio@seismic-catbird-123721:~$ gcloud config set compute/zone europe-west1-b
+paulo_matencio@seismic-catbird-123721:~$ gcloud compute instances create ubuntu  --image-project ubuntu-os-cloud --image ubuntu-1604-xenial-v20160420c
+Created [https://www.googleapis.com/compute/v1/projects/seismic-catbird-123721/zones/europe-west1-b/instances/ubuntu].
+NAME    ZONE            MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP     STATUS
+ubuntu  europe-west1-b  n1-standard-1               10.132.0.2   146.148.20.251  RUNNING
+
+
+
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/paulo_matencio/.ssh/google_compute_engine.
+Your public key has been saved in /home/paulo_matencio/.ssh/google_compute_engine.pub.
+The key fingerprint is:
+72:8e:15:92:d7:8b:5f:7c:30:a4:7f:4a:d0:4d:40:dd paulo_matencio@cs-6481-devshell-vm-098aff91-9c37-4885-bf96-167920fccbcf-43
+The key's randomart image is:
+
+
+gcloud compute ssh ubuntu
+
+
+paulo_matencio@ubuntu:~$ sudo systemctl start nginx
+paulo_matencio@ubuntu:~$ sudo systemct status  nginx
+sudo: systemct: command not found
+paulo_matencio@ubuntu:~$ sudo systemctl  status  nginx
+● nginx.service - A high performance web server and a reverse proxy server
+   Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2016-05-26 12:33:45 UTC; 37s ago
+ Main PID: 3232 (nginx)
+   CGroup: /system.slice/nginx.service
+           ├─3232 nginx: master process /usr/sbin/nginx -g daemon on; master_process on
+           └─3233 nginx: worker process                           
+May 26 12:33:45 ubuntu systemd[1]: Starting A high performance web server and a reverse proxy server...
+May 26 12:33:45 ubuntu systemd[1]: nginx.service: Failed to read PID from file /run/nginx.pid: Invalid argument
+May 26 12:33:45 ubuntu systemd[1]: Started A high performance web server and a reverse proxy server.
+May 26 12:34:08 ubuntu systemd[1]: Started A high performance web server and a reverse proxy server.
+paulo_matencio@ubuntu:~$ curl http://127.0.0.1
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+paulo_matencio@ubuntu:~$ 
+
+
+sudo apt-get install docker.io
+sudo docker images
+
+sudo docker pull nginx:1.10.0
+sudo docker images
+
+dpkg -l | grep nginx
+
+
+
+paulo_matencio@ubuntu:~$ sudo docker run -d nginx:1.10.0
+6072aef6cda9222fbff866bdcc5fc15ce7729b417024642403b2cd96e8a68173
+
+paulo_matencio@ubuntu:~$ sudo docker  ps
+
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+6072aef6cda9        nginx:1.10.0        "nginx -g 'daemon off"   14 seconds ago      Up 14 seconds       80/tcp, 443/tcp     dreamy_jepsen
+
+
+paulo_matencio@ubuntu:~$ sudo docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+d8521cdd4374        nginx:1.10.0        "nginx -g 'daemon off"   9 minutes ago       Up 9 minutes        80/tcp, 443/tcp     evil_rosalind
+08323176002d        nginx:1.9.3         "nginx -g 'daemon off"   2 hours ago         Up 2 hours          80/tcp, 443/tcp     small_perlman
+6072aef6cda9        nginx:1.10.0        "nginx -g 'daemon off"   2 hours ago         Up 2 hours          80/tcp, 443/tcp     dreamy_jepsen
+
+
+sudo docker inspect 08323176002d
+
+"Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.3",
+			
+curl  http://172.17.0.3
+
+
