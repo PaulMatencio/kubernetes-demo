@@ -10,14 +10,28 @@ import (
 	"syscall"
 
 	"github.com/braintree/manners"
-	"github.com/udacity/ud615/app/handlers"
-	"github.com/udacity/ud615/app/health"
-	"github.com/udacity/ud615/app/user"
+	"github.com/kubernetes-demo/app/handlers"
+	"github.com/kubernetes-demo/app/health"
+	"github.com/kubernetes-demo/app/user"
 )
 
 const version = "1.0.0"
 
 func main() {
+	// Processing HTTP requests with Go is primarily about two things:
+	//          ServeMuxes and Handlers.
+
+	/* A ServeMux is essentially a HTTP request router (or multiplexor).
+	It compares incoming requests against a list of predefined URL paths,
+	and calls the associated handler for the path whenever a match is found.
+	*/
+
+	/*
+		Handlers are responsible for writing response headers and bodies.
+		Almost any object can be a handler, so long as it satisfies the http.Handler interface.
+		In lay terms, that simply means it must have a ServeHTTP method with the following signature:
+	*/
+
 	var (
 		httpAddr   = flag.String("http", "0.0.0.0:80", "HTTP service address.")
 		healthAddr = flag.String("health", "0.0.0.0:81", "Health service address.")
@@ -36,10 +50,12 @@ func main() {
 	hmux.HandleFunc("/readiness", health.ReadinessHandler)
 	hmux.HandleFunc("/healthz/status", health.HealthzStatusHandler)
 	hmux.HandleFunc("/readiness/status", health.ReadinessStatusHandler)
+
 	healthServer := manners.NewServer()
 	healthServer.Addr = *healthAddr
 	healthServer.Handler = handlers.LoggingHandler(hmux)
 
+	// A go routine is fired to handle an incoming request
 	go func() {
 		errChan <- healthServer.ListenAndServe()
 	}()

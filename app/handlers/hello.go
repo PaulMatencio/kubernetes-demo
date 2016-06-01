@@ -16,3 +16,11 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 	return
 }
+
+func SecureHelloHandler(w http.ResponseWriter, r *http.Request) {
+	response := HelloResponse{
+		Message: "Secure Hello",
+	}
+	json.NewEncoder(w).Encode(response)
+	return
+}

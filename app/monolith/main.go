@@ -10,9 +10,9 @@ import (
 	"syscall"
 
 	"github.com/braintree/manners"
-	"github.com/udacity/ud615/app/handlers"
-	"github.com/udacity/ud615/app/health"
-	"github.com/udacity/ud615/app/user"
+	"github.com/kubernetes-demo/app/handlers"
+	"github.com/kubernetes-demo/app/health"
+	"github.com/kubernetes-demo/app/user"
 )
 
 const version = "1.0.0"

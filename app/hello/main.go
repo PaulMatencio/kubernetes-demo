@@ -10,8 +10,8 @@ import (
 	"syscall"
 
 	"github.com/braintree/manners"
-	"github.com/udacity/ud615/app/handlers"
-	"github.com/udacity/ud615/app/health"
+	"github.com/kubernetes-demo/app/handlers"
+	"github.com/kubernetes-demo/app/health"
 )
 
 const version = "1.0.0"
@@ -44,7 +44,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handlers.HelloHandler)
-	mux.Handle("/secure", handlers.JWTAuthHandler(handlers.HelloHandler))
+	mux.Handle("/secure", handlers.JWTAuthHandler(handlers.SecureHelloHandler))
 	mux.Handle("/version", handlers.VersionHandler(version))
 
 	httpServer := manners.NewServer()

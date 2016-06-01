@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/udacity/ud615/app/user"
+	"github.com/kubernetes-demo/app/user"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -39,6 +39,7 @@ func (h *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
+
 	token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	token.Claims["iss"] = "auth.service"
 	token.Claims["iat"] = time.Now().Unix()
