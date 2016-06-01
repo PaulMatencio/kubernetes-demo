@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: "udacity/example-auth:1.0.0"
+          image: "pmatencio60/auth:1.0.0"
           ports:
             - name: http
               containerPort: 80
