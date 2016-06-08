@@ -3,3 +3,4 @@ kubectl delete services monolith auth frontend hello
 kubectl delete deployments auth frontend hello
 kubectl delete secrets tls-certs
 kubectl delete configmaps nginx-frontend-conf nginx-proxy-conf
+kubectl delete  horizontalpodautoscalers hello
