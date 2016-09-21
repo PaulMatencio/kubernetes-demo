@@ -12,37 +12,63 @@ import (
 	"time"
 )
 
-func main() {
+var (
+	myurl string
+	wait  time.Duration
+)
 
-	proxyUrl, _ := url.Parse("http://proxylb.internal.epo.org:8080")
+func main() {
+	// get the proxy environment variable
+	proxy := os.Getenv("HTTPS_PROXY")
+	if len(proxy) == 0 {
+		proxy = os.Getenv("https_proxy")
+	}
+
+	proxyUrl, _ := url.Parse(proxy)
+
+	// update the transport to add Insecure connection and proxy
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		Proxy:           http.ProxyURL(proxyUrl),
 	}
-
-	myurl := "https://golang.org"
-	loop := 0
-	mynum := 1
-	if len(os.Args) > 1 {
+	argnum := len(os.Args) - 1
+	if argnum == 0 {
+		fmt.Println("client url  [concurrent_requests] [number_of_times]  [waittime_between_times]")
+		os.Exit(1)
+	}
+	// myurl := "https://golang.org"
+	mynum := 1 // concurrent go routines
+	times := 1 // number of times
+	wait := 100
+	if argnum >= 1 {
 		myurl = os.Args[1]
 	}
-	if len(os.Args) > 2 {
+	if argnum >= 2 {
 		mynum, _ = strconv.Atoi(os.Args[2])
 	}
-	start := time.Now()
+	if argnum >= 3 {
+		times, _ = strconv.Atoi(os.Args[3])
+	}
+	if argnum >= 4 {
+		wait, _ = strconv.Atoi(os.Args[4])
+	}
+	waitTime := time.Duration(wait) * time.Millisecond
+
+	// start := time.Now()
 	ch := make(chan string)
+	for k := 0; k < times; k++ {
+		start := time.Now()
+		for i := 0; i < mynum; i++ {
+			go fetch(myurl, tr, ch) // start a go routine
+		}
 
-	for loop < mynum {
-		go fetch(myurl, tr, ch) // start a go routine
-		loop++
-	}
-	loop = 0
-	for loop < mynum {
-		fmt.Println(<-ch)
-		loop++
-	}
+		for i := 0; i < mynum; i++ {
+			fmt.Println(<-ch)
+		}
 
-	fmt.Printf("%.2fs elapsed\n", time.Since(start).Seconds())
+		fmt.Printf("%.2fs elapsed\n", time.Since(start).Seconds())
+		time.Sleep(waitTime)
+	}
 
 }
 
