@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontendmicro
 spec:
   replicas: 1
   template:
@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: "nginx:1.9.14"
+          image: "nginx:1.11.4"
           lifecycle:
             preStop:
               exec:

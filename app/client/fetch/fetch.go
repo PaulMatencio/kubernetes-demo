@@ -24,7 +24,7 @@ var (
 )
 
 func usage() {
-	usage := "\nUsage: fetch -www <string> -S <boolean> -c <integer> -l <integer> -W <integer> -C <boolean>" +
+	usage := "\nUsage: fetch -www <url> -S <true/false> -c <concurrent request> -l <number of loops> -W <wait time between 2 loops> -C <true/false>" +
 		"\n\nDefault Options:\n"
 	fmt.Println(usage)
 	flag.PrintDefaults()

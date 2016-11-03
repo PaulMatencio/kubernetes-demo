@@ -1,6 +1,6 @@
 {
-	"ImportPath": "github.com/udacity/ud615/app",
-	"GoVersion": "go1.6",
+	"ImportPath": "github.com/PaulMatencio/kubernetes-demo",
+	"GoVersion": "go1.6.2",
 	"GodepVersion": "v62",
 	"Deps": []
 }
